@@ -3,26 +3,42 @@ import { galleryItems } from './gallery-items.js';
 
 console.log(galleryItems);
 
-const ulImages = document.querySelector(".gallery")
+const galleryItem = document.querySelector(".gallery");
 
-const createGallery = (galleryItems) => {
-    return galleryItems.map(({preview, original, description}) => {
-        return`
-        
-            <li class="gallery__item">
-                <a class="gallery__link"
-                 href="${original}">
-                    <img class="gallery__image"
-                    src="${preview}"
-                    data-source="${original}"
-                    alt="${description}">
-                </a>
-            </li>
-        
-        `
-        
+galleryItem.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  }
+  const instance = basicLightbox.create(
+    `<img src=${event.target.dataset.source} width="800" height="600">`
+  );
+
+  instance.show();
+
+  window.addEventListener("keydown", closeGallery);
+  function closeGallery(event) {
+    if (event.key === "Escape") {
+      instance.close();
+    }
+  }
+});
+
+function createGallery(item) {
+  return item
+    .map(({ preview, original, description }) => {
+      return `<div class="gallery__item">
+  <a class="gallery__link" href=${original}>
+    <img
+      class="gallery__image"
+      src=${preview}
+      data-source=${original}
+      alt=${description}
+    />
+  </a>
+</div>`;
     })
-    .join("")
+    .join("");
 }
 
-ulImages.insertAdjacentHTML("afterbegin", createGallery(galleryItems))
+galleryItem.innerHTML = createGallery(galleryItems);
