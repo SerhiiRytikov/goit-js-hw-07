@@ -1,44 +1,44 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-console.log(galleryItems);
+const galleryAllPhotoPreview = document.querySelector('.gallery');
 
-const galleryItem = document.querySelector(".gallery");
+const gelImg = galleryItems
+  .map(
+    el =>
+      `<div class="gallery__item">
+      <a class="gallery__link" href="${el.original}">
+        <img
+          class="gallery__image"
+          src=${el.preview}
+          data-source=${el.original}
+          alt=${el.description}
+        />
+      </a>
+    </div>`,
+  )
+  .join('');
 
-galleryItem.addEventListener("click", (event) => {
+galleryAllPhotoPreview.innerHTML = gelImg;
+
+galleryAllPhotoPreview.addEventListener('click', selectImage);
+
+function selectImage(event) {
   event.preventDefault();
-  if (!event.target.classList.contains("gallery__image")) {
+  if (event.target.nodeName !== 'IMG') {
     return;
   }
+
   const instance = basicLightbox.create(
-    `<img src=${event.target.dataset.source} width="800" height="600">`
+    `<img  src=${event.target.dataset.source}  width ="800" />`,
   );
 
   instance.show();
 
-  window.addEventListener("keydown", closeGallery);
-  function closeGallery(event) {
-    if (event.key === "Escape") {
+  document.addEventListener('keydown', keyEsc);
+  function keyEsc(event) {
+    if (event.key === 'Escape') {
       instance.close();
     }
   }
-});
-
-function createGallery(item) {
-  return item
-    .map(({ preview, original, description }) => {
-      return `<div class="gallery__item">
-  <a class="gallery__link" href=${original}>
-    <img
-      class="gallery__image"
-      src=${preview}
-      data-source=${original}
-      alt=${description}
-    />
-  </a>
-</div>`;
-    })
-    .join("");
 }
-
-galleryItem.innerHTML = createGallery(galleryItems);
